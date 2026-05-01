@@ -144,7 +144,7 @@ class BallisticsEngine {
      * Calculate Moving Target Lead
      */
     calculateLead(targetSpeedKmh, angleDeg, timeOfFlight) {
-        if (targetSpeedKmh === 0) return 0;
+        if (!targetSpeedKmh) return 0;
         let speedMs = MathUtils.kmhToMs(targetSpeedKmh);
         let radDir = MathUtils.degToRad(angleDeg);
         let crossSpeed = speedMs * Math.sin(radDir);

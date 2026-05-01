@@ -61,7 +61,7 @@ function Upload-File {
     }
     $resp = Invoke-GitHubApi -Method PUT -Url $url -Headers $authHeader -Body $body
     if ($resp -is [System.Management.Automation.ErrorRecord]) {
-        Write-Error ("Failed to upload $RepoPath: $($resp.message)")
+        Write-Error "Failed to upload ${RepoPath}: $($resp.message)"
     } else {
         Write-Host "Uploaded: $RepoPath"
     }

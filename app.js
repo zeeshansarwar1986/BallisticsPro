@@ -208,11 +208,11 @@ function getFormValues() {
             caliber: document.getElementById('caliber').value,
             bulletWeight: parseFloat(document.getElementById('bullet_weight').value),
             g7Bc: parseFloat(document.getElementById('g7_bc').value),
-            muzzleVelocity: parseFloat(document.getElementById('muzzle_vel').value),
-            scopeZero: parseFloat(document.getElementById('scope_zero').value) * 1000, // km to m
-            targetDist: parseFloat(document.getElementById('target_dist').value) * 1000, // km to m
-            targetSpeed: parseFloat(document.getElementById('target_speed').value),
-            targetAngle: parseFloat(document.getElementById('target_angle').value)
+            muzzleVelocity: parseFloat(document.getElementById('muzzle_vel').value) || 0,
+            scopeZero: (parseFloat(document.getElementById('scope_zero').value) || 0.1) * 1000, // km to m
+            targetDist: (parseFloat(document.getElementById('target_dist').value) || 0.1) * 1000, // km to m
+            targetSpeed: parseFloat(document.getElementById('target_speed').value) || 0,
+            targetAngle: parseFloat(document.getElementById('target_angle').value) || 0
         }
     };
 }
@@ -302,7 +302,8 @@ function calculateSolution() {
     
     // Net Drop (Drop at target minus drop at zero scaled)
     // Simplified elevation correction (meters)
-    let netDrop = trajTarget.dropMeters - (trajZero.dropMeters * (rifle.targetDist / rifle.scopeZero));
+    let safeZero = rifle.scopeZero > 0 ? rifle.scopeZero : 100;
+    let netDrop = trajTarget.dropMeters - (trajZero.dropMeters * (rifle.targetDist / safeZero));
     
     // Windage
     let windDeflection = engine.calculateWindage(rifle.targetDist, trajTarget.timeOfFlight);
@@ -463,9 +464,11 @@ function updateHoldoverDot() {
     const containerSize = container.offsetWidth; // in pixels (square)
 
     // Convert meters of correction to MRAD
-    const dist = lastSolution.targetDist;
+    const dist = lastSolution.targetDist > 0 ? lastSolution.targetDist : 1;
     const elevMrad = (lastSolution.elevationMeters / dist) * 1000;
     const windMrad = (lastSolution.windageMeters / dist) * 1000;
+    const leadMrad = (lastSolution.leadMeters / dist) * 1000;
+    const totalHorizMrad = windMrad + leadMrad;
 
     // Scale: SVG is 100 units wide/tall, maps to containerSize pixels.
     // 1 SVG unit = containerSize/100 pixels.
@@ -477,7 +480,7 @@ function updateHoldoverDot() {
     const cy = containerSize / 2;
 
     // Elevation: bullet drops DOWN, so we add pixels downward
-    const dotX = cx + (windMrad * pixelsPerMrad);
+    const dotX = cx + (totalHorizMrad * pixelsPerMrad);
     const dotY = cy + (elevMrad * pixelsPerMrad);
 
     // Apply position using transform origin at its own center
