@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BallisticsPro - Sniper Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="app-header">
+        <h1>BallisticsPro</h1>
+        <div class="header-controls">
+            <button id="toggle-lang" class="btn-icon">اردو</button>
+            <button id="toggle-night" class="btn-icon">🌙</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Input Section -->
+        <section class="card inputs-section">
+            <h2 data-i18n="env_conditions">Environmental Conditions</h2>
+            <div class="grid">
+                <div class="input-group">
+                    <label data-i18n="wind_speed">Wind Speed (km/h)</label>
+                    <input type="number" id="wind_speed" value="10" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="wind_dir">Wind Direction (degrees)</label>
+                    <input type="number" id="wind_dir" value="90" step="1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="humidity">Humidity (%)</label>
+                    <input type="number" id="humidity" value="50" step="1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="temp">Temperature (°C)</label>
+                    <input type="number" id="temp" value="25" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="pressure">Barometric Pressure (mbar)</label>
+                    <input type="number" id="pressure" value="1013" step="1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="altitude">Altitude (m)</label>
+                    <input type="number" id="altitude" value="0" step="1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="rain">Rain Intensity Level (0-10)</label>
+                    <input type="number" id="rain" value="0" step="1" min="0" max="10">
+                </div>
+            </div>
+
+            <h2 data-i18n="rifle_profile" class="mt-4">Rifle & Ammo Profile</h2>
+            <div class="profile-controls">
+                <select id="profile_select">
+                    <option value="default" data-i18n="default_profile">Default Profile</option>
+                </select>
+                <button id="save_profile" class="btn-secondary" data-i18n="save_profile">Save Profile</button>
+            </div>
+            <div class="grid">
+                <div class="input-group">
+                    <label data-i18n="caliber">Caliber (e.g., .308)</label>
+                    <input type="text" id="caliber" value=".308">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="bullet_weight">Bullet Weight (grains)</label>
+                    <input type="number" id="bullet_weight" value="175" step="1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="g7_bc">Ballistic Coefficient (G7)</label>
+                    <input type="number" id="g7_bc" value="0.243" step="0.001">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="muzzle_vel">Muzzle Velocity (m/s)</label>
+                    <input type="number" id="muzzle_vel" value="800" step="1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="scope_zero">Scope Zero Distance (km)</label>
+                    <input type="number" id="scope_zero" value="0.1" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="target_dist">Target Distance (km)</label>
+                    <input type="number" id="target_dist" value="1.0" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="target_speed">Target Speed (km/h)</label>
+                    <input type="number" id="target_speed" value="0" step="1">
+                </div>
+                <div class="input-group">
+                    <label data-i18n="target_angle">Target Angle (0-180°)</label>
+                    <input type="number" id="target_angle" value="90" step="1" title="90 is full cross, 0 is coming straight at you">
+                </div>
+            </div>
+
+            <button id="calculate_btn" class="btn-primary mt-4" data-i18n="calculate">Calculate Solution</button>
+        </section>
+
+        <!-- Output Section -->
+        <section class="card results-section">
+            <h2 data-i18n="firing_solution">Firing Solution</h2>
+            
+            <div class="advisory-card" id="advisory_card">
+                <h3 id="advisory_text">WAIT</h3>
+                <p id="confidence_text">Confidence: 0%</p>
+            </div>
+
+            <div class="results-grid">
+                <div class="result-box">
+                    <span class="label" data-i18n="elevation">Elevation Correction</span>
+                    <span class="value" id="res_elevation">0.0</span>
+                    <select id="unit_elevation" class="unit-select">
+                        <option value="moa">MOA</option>
+                        <option value="mrad">MRAD</option>
+                        <option value="clicks">Clicks (1/4 MOA)</option>
+                        <option value="in">Inches</option>
+                        <option value="cm">cm</option>
+                    </select>
+                </div>
+                <div class="result-box">
+                    <span class="label" data-i18n="windage">Windage Correction</span>
+                    <span class="value" id="res_windage">0.0</span>
+                    <select id="unit_windage" class="unit-select">
+                        <option value="moa">MOA</option>
+                        <option value="mrad">MRAD</option>
+                        <option value="clicks">Clicks (1/4 MOA)</option>
+                        <option value="in">Inches</option>
+                        <option value="cm">cm</option>
+                    </select>
+                </div>
+                <div class="result-box">
+                    <span class="label" data-i18n="target_lead">Target Lead Correction</span>
+                    <span class="value" id="res_lead">0.0</span>
+                    <select id="unit_lead" class="unit-select">
+                        <option value="moa">MOA</option>
+                        <option value="mrad">MRAD</option>
+                        <option value="clicks">Clicks (1/4 MOA)</option>
+                        <option value="in">Inches</option>
+                        <option value="cm">cm</option>
+                    </select>
+                </div>
+                <div class="result-box">
+                    <span class="label" data-i18n="total_drop">Total Bullet Drop (cm)</span>
+                    <span class="value" id="res_drop">0.0</span>
+                </div>
+                <div class="result-box">
+                    <span class="label" data-i18n="tof">Time of Flight (s)</span>
+                    <span class="value" id="res_tof">0.0</span>
+                </div>
+                <div class="result-box">
+                    <span class="label" data-i18n="terminal_energy">Terminal Energy (J)</span>
+                    <span class="value" id="res_energy">0.0</span>
+                </div>
+            </div>
+            
+            <button id="export_pdf" class="btn-secondary mt-4" data-i18n="export_pdf">Export Range Card (PDF)</button>
+            <button id="open_scope_btn" class="btn-primary mt-4" style="background-color: var(--advisory-shoot);" data-i18n="open_scope">Open Sniper Scope (AR)</button>
+        </section>
+    </main>
+
+    <div id="scope_overlay" class="scope-overlay hidden">
+        <video id="camera_feed" autoplay playsinline></video>
+        <div class="reticle-container">
+            <svg class="reticle-svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+                <line x1="50" y1="0" x2="50" y2="100" stroke="black" stroke-width="0.3"/>
+                <line x1="0" y1="50" x2="100" y2="50" stroke="black" stroke-width="0.3"/>
+                <circle cx="50" cy="40" r="0.5" fill="black"/><circle cx="50" cy="30" r="0.5" fill="black"/><circle cx="50" cy="20" r="0.5" fill="black"/><circle cx="50" cy="10" r="0.5" fill="black"/>
+                <circle cx="50" cy="60" r="0.5" fill="black"/><circle cx="50" cy="70" r="0.5" fill="black"/><circle cx="50" cy="80" r="0.5" fill="black"/><circle cx="50" cy="90" r="0.5" fill="black"/>
+                <circle cx="40" cy="50" r="0.5" fill="black"/><circle cx="30" cy="50" r="0.5" fill="black"/><circle cx="20" cy="50" r="0.5" fill="black"/><circle cx="10" cy="50" r="0.5" fill="black"/>
+                <circle cx="60" cy="50" r="0.5" fill="black"/><circle cx="70" cy="50" r="0.5" fill="black"/><circle cx="80" cy="50" r="0.5" fill="black"/><circle cx="90" cy="50" r="0.5" fill="black"/>
+            </svg>
+            <div id="holdover_dot" class="holdover-dot"></div>
+        </div>
+        <button id="close_scope_btn" class="btn-icon close-scope">X</button>
+    </div>
+
+    <script src="ballistics.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

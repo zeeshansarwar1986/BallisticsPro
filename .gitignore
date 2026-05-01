@@ -1,0 +1,16 @@
+# .gitignore for BallisticsPro
+# Node modules (if Capacitor is used to build APK)
+node_modules/
+android/
+ios/
+package-lock.json
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+*.swp
+*.swo

@@ -1,0 +1,16 @@
+{
+  "name": "BallisticsPro",
+  "short_name": "BallisticsPro",
+  "description": "Professional Android ballistics calculator app for security agencies.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230ea5e9'/%3E%3Ccircle cx='50' cy='50' r='10' fill='white'/%3E%3Cpath d='M50 0v100M0 50h100' stroke='white' stroke-width='2'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}
