@@ -45,7 +45,10 @@ const translations = {
         target_speed: "Target Speed (km/h)",
         target_angle: "Target Angle (0-180°)",
         target_lead: "Target Lead Correction",
-        scope_label_lead: "LEAD"
+        scope_label_lead: "LEAD",
+        group_world: "🌍 World Top 10 Sniper Rifles",
+        group_pak: "🇵🇰 Pakistan Army / SSG Rifles",
+        group_custom: "⚙️ Custom Profiles"
     },
     ur: {
         env_conditions: "ماحولیاتی حالات",
@@ -88,8 +91,64 @@ const translations = {
         target_speed: "ہدف کی رفتار (km/h)",
         target_angle: "ہدف کا زاویہ (0-180°)",
         target_lead: "ہدف کا لیڈ",
-        scope_label_lead: "لیڈ"
+        scope_label_lead: "لیڈ",
+        group_world: "دنیا کی بہترین 10 سنائپر",
+        group_pak: "🇵🇰 پاکستان آرمی / ایس ایس جی رائفلز",
+        group_custom: "⚙️ کسٹم پروفائلز"
+    },
+    ar: {
+        env_conditions: "الظروف البيئية",
+        wind_speed: "سرعة الرياح (كم/س)",
+        wind_dir: "اتجاه الرياح (درجات)",
+        humidity: "الرطوبة (%)",
+        temp: "درجة الحرارة (°م)",
+        pressure: "الضغط الجوي (mbar)",
+        altitude: "الارتفاع (م)",
+        rain: "شدة المطر (0-10)",
+        rifle_profile: "ملف البندقية والذخيرة",
+        default_profile: "الملف الافتراضي",
+        save_profile: "حفظ الملف",
+        caliber: "عيار (مثال .308)",
+        bullet_weight: "وزن الطلقة (grains)",
+        g7_bc: "معامل الباليستيك (G7)",
+        muzzle_vel: "سرعة الفوهة (م/ث)",
+        scope_zero: "مسافة ضبط المنظار (كم)",
+        target_dist: "مسافة الهدف (كم)",
+        calculate: "حساب الحل",
+        firing_solution: "حل الرماية",
+        elevation: "تصحيح الارتفاع",
+        windage: "تصحيح الرياح",
+        total_drop: "إجمالي سقوط الرصاصة (سم)",
+        tof: "زمن الطيران (ث)",
+        terminal_energy: "طاقة النهاية (ج)",
+        export_pdf: "تصدير بطاقة المدى (PDF)",
+        confidence: "الثقة",
+        advisory_shoot: "أطلق",
+        advisory_wait: "انتظر",
+        advisory_noshoot: "لا تطلق",
+        open_scope: "🔭 افتح منظار القناص (كاميرا AR)",
+        scope_no_solution: "احسب حل الرماية أولاً!",
+        scope_no_camera: "الكاميرا غير مدعومة على هذا الجهاز.",
+        scope_label_elev: "ارتفاع",
+        scope_label_wind: "رياح",
+        scope_label_tof: "الزمن",
+        scope_label_energy: "طاقة",
+        scope_label_confidence: "الثقة",
+        target_speed: "سرعة الهدف (كم/س)",
+        target_angle: "زاوية الهدف (0-180°)",
+        target_lead: "تصحيح تقدير الهدف",
+        scope_label_lead: "تقدير",
+        group_world: "🌍 أفضل 10 بنادق قناصة في العالم",
+        group_pak: "🇵🇰 بنادق جيش باكستان / SSG",
+        group_custom: "⚙️ ملفات مخصصة"
     }
+};
+
+const languageOrder = ['en', 'ur', 'ar'];
+const languageNames = {
+    en: 'English',
+    ur: 'اردو',
+    ar: 'العربية'
 };
 
 /**
@@ -163,9 +222,12 @@ function bindEvents() {
 }
 
 function toggleLanguage() {
-    currentLang = currentLang === 'en' ? 'ur' : 'en';
-    document.getElementById('toggle-lang').innerText = currentLang === 'en' ? 'اردو' : 'English';
-    document.dir = currentLang === 'ur' ? 'rtl' : 'ltr';
+    const currentIndex = languageOrder.indexOf(currentLang);
+    const nextIndex = (currentIndex + 1) % languageOrder.length;
+    currentLang = languageOrder[nextIndex];
+    const nextLang = languageOrder[(nextIndex + 1) % languageOrder.length];
+    document.getElementById('toggle-lang').innerText = languageNames[nextLang];
+    document.dir = currentLang === 'ur' || currentLang === 'ar' ? 'rtl' : 'ltr';
     applyTranslations();
     loadProfiles(); // Refresh the dynamic dropdown labels
 }
@@ -233,10 +295,10 @@ function loadProfiles() {
 
     // Group 1: World Top 10
     let grpWorld = document.createElement('optgroup');
-    grpWorld.label = currentLang === 'ur' ? "دنیا کی بہترین 10 سنائپر" : "🌍 World Top 10 Sniper Rifles";
+    grpWorld.label = translations[currentLang]['group_world'];
     // Group 2: Pakistan
     let grpPak = document.createElement('optgroup');
-    grpPak.label = currentLang === 'ur' ? "🇵🇰 پاکستان آرمی / ایس ایس جی رائفلز" : "🇵🇰 Pakistan Army / SSG Rifles";
+    grpPak.label = translations[currentLang]['group_pak'];
 
     for(let name in builtinProfiles) {
         let opt = document.createElement('option');
@@ -255,7 +317,7 @@ function loadProfiles() {
     let profiles = JSON.parse(localStorage.getItem('profiles')) || {};
     if (Object.keys(profiles).length > 0) {
         let grpCustom = document.createElement('optgroup');
-        grpCustom.label = currentLang === 'ur' ? "کسٹم پروفائلز" : "⚙️ Custom Profiles";
+        grpCustom.label = translations[currentLang]['group_custom'];
         for(let name in profiles) {
             let opt = document.createElement('option');
             opt.value = "custom_" + name;
